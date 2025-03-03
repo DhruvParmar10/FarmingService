@@ -109,7 +109,7 @@ spring:
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/farming-services.git
+   git clone https://github.com/DhruvParmar10/FarmingService.git
    cd farming-services
    ```
 2. Build and run the services with Docker:
