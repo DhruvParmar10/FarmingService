@@ -144,5 +144,5 @@ Contributions are welcome! Feel free to fork the repository and submit a pull re
 
 ## Contact
 
-For any inquiries, reach out to [**your-email@example.com**](mailto\:your-email@example.com).
+For any inquiries, reach out to [**your-email@example.com**](mailto\:dhruv.jparmar0@gmail.com).
 
