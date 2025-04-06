@@ -84,7 +84,7 @@ SmartFarm empowers farmers and agricultural managers to monitor and control vari
 
 ### 1️⃣ Clone the Repository
 ```bash
-git clone https://github.com/your-org/smartfarm-system.git
+git clone https://github.com/dhruvparmar10/smartfarm-system.git
 cd smartfarm-system
 ```
 
