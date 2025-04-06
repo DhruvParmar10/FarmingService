@@ -1,148 +1,236 @@
-# Farming Services 🚜🌱 - Microservices-based Smart Farming System
+# SmartFarm Management System
 
-## Overview 🏞️
+A distributed, microservices-based agricultural management system with IoT integration.
 
-Farming Services is a microservices-based system designed to **automate** and **manage** various aspects of smart farming. This innovative platform provides multiple services for user management, crop monitoring, bot automation, inventory management, task scheduling, notifications, and payments. Enjoy seamless integration and a robust tech stack that propels farming into the future!
+---
 
-## Key Features ✨
+## 📚 Table of Contents
+- [📌 Overview](#overview)
+- [✨ Features](#features)
+- [🧱 Architecture](#architecture)
+- [🛠 Technologies](#technologies)
+- [⚙️ Prerequisites](#prerequisites)
+- [🚀 Installation](#installation)
+- [🔧 Services](#services)
+- [📡 API Endpoints](#api-endpoints)
+- [📦 Deployment](#deployment)
+- [🔧 Configuration](#configuration)
+- [🔐 Security](#security)
+- [🐞 Troubleshooting](#troubleshooting)
+- [📄 License](#license)
 
-- **User Management** 👥: Secure authentication, registration, and role-based access.
-- **Crop Monitoring** 🌾: Real-time sensor data (temperature, humidity, soil moisture, etc.) for smart decision-making.
-- **Bot Management** 🤖: Autonomous bots to assist with essential farming tasks.
-- **Warehouse & Inventory Management** 📦: Efficient tracking of harvested crops, fertilizers, and tools.
-- **Task Scheduling** 📅: Automated assignment of farming tasks based on schedules and sensor data.
-- **Notification Service** 🔔: Timely alerts for low inventory, plant health issues, and system events.
-- **Payment & Subscription** 💳: Secure processing for subscription-based services.
-- **API Gateway** 🚪: Intelligent routing of requests to the appropriate microservices.
-- **Service Discovery** 🔍: Eureka Server for dynamic microservice management.
-- **Event-driven Communication** 📡: Powered by Kafka/RabbitMQ for efficient service interaction.
+---
 
-## Tech Stack 🛠️
+## 📌 Overview
+SmartFarm empowers farmers and agricultural managers to monitor and control various farm operations using a robust microservices architecture. Real-time data is captured through IoT sensors and used for monitoring and automated scheduling.
 
-- **Backend:** Java (Spring Boot, Spring JPA, Lombok, Hibernate)
-- **Database:** MySQL/PostgreSQL, Redis (for caching)
-- **Messaging:** Kafka/RabbitMQ
-- **API Management:** Spring Cloud Gateway
-- **Service Discovery:** Eureka Server
-- **Security:** JWT Authentication, OAuth2
-- **Containerization & Deployment:** Docker, Kubernetes (K8s), AWS/GCP
+---
 
-## Microservices Breakdown 🔎
+## ✨ Features
+- ✅ User authentication & role-based access control
+- 🌾 Farm & farmer management
+- 🌱 Crop growth monitoring
+- 💧 Automated irrigation scheduling
+- 🌍 Soil condition monitoring
+- 🔍 Centralized service discovery
+- 🐳 Containerized deployment
+- 🕒 Scheduled data injection
 
-### 1. User Service 👤
+---
 
-**Responsibilities:** Manages user authentication, roles, and accounts.  
-**APIs:**
-- `POST /users/register` - Register a new user
-- `POST /users/login` - Authenticate and generate JWT
-- `GET /users/{id}` - Retrieve user details
-
-### 2. Crop Monitoring Service 🌱
-
-**Responsibilities:** Collects and analyzes live sensor data from the fields.  
-**APIs:**
-- `POST /sensor-data` - Receive data from IoT sensors
-- `GET /sensor-data/latest/{farmId}` - Fetch the latest sensor readings
-
-### 3. Bot Management Service 🤖
-
-**Responsibilities:** Oversees bot tasks like watering, fertilizing, and more.  
-**APIs:**
-- `POST /bots/register` - Register a new bot
-- `GET /bots/status/{botId}` - Get current bot status
-
-### 4. Warehouse & Inventory Service 📦
-
-**Responsibilities:** Tracks inventory and manages warehouse stock efficiently.  
-**APIs:**
-- `POST /inventory/add` - Add new items to inventory
-- `GET /inventory/{farmId}` - Retrieve available stock
-- `POST /stock-movement/transfer` - Transfer stock between warehouses
-
-### 5. Task Scheduling Service 📅
-
-**Responsibilities:** Automates the assignment of farming tasks to bots.  
-**APIs:**
-- `POST /tasks/create` - Create a new farming task
-- `GET /tasks/{farmId}` - Retrieve scheduled tasks
-
-### 6. Notification Service 🔔
-
-**Responsibilities:** Sends alerts for critical system events and updates.  
-**APIs:**
-- `POST /notifications/send` - Trigger a notification
-- `GET /notifications/{userId}` - Retrieve past notifications
-
-### 7. Payment & Subscription Service 💳
-
-**Responsibilities:** Processes payments and manages subscription plans.  
-**APIs:**
-- `POST /payments/subscribe` - Subscribe to a plan
-- `POST /payments/process` - Process a payment
-
-## API Gateway Configuration 🚪
-
-The API Gateway efficiently routes requests to the corresponding microservices.
-
-```yaml
-spring:
-  cloud:
-    gateway:
-      routes:
-        - id: user-service
-          uri: http://user-service:8081
-          predicates:
-            - Path=/api/users/**
-        - id: inventory-service
-          uri: http://inventory-service:8084
-          predicates:
-            - Path=/api/inventory/**
-        - id: warehouse-service
-          uri: http://warehouse-service:8085
-          predicates:
-            - Path=/api/warehouse/**
+## 🧱 Architecture
+```
++-----------------+       +---------------+       +-----------------+
+|   Web/Mobile    |<----->|  API Gateway  |<----->|   Microservices |
+|    Client       |       |               |       | (Auth, Farm,    |
++-----------------+       +-------+-------+       |  Crops, Soil,   |
+                                   |               |  Irrigation,    |
+                                   v               |  Scheduler)     |
+                             +-------------+       +--------+--------+
+                             | Eureka Server|                |
+                             | (Discovery)  |<---------------+ 
+                             +------+-------+
+                                    ^
+                                    |
+                            +-------+-------+
+                            |   Database    |
+                            |   (MySQL)     |
+                            +---------------+
 ```
 
-## Deployment Guide
+---
 
-### 1. Local Deployment with Docker
+## 🛠 Technologies
+- **Core**: Java 17, Spring Boot 3.x, Spring Cloud
+- **Persistence**: Spring Data JPA, MySQL
+- **Service Discovery**: Eureka Server
+- **API Gateway**: Spring Cloud Gateway
+- **Scheduling**: Spring Scheduler
+- **Containerization**: Docker, Kubernetes
+- **Monitoring**: Spring Boot Actuator
 
-1. Clone the repository:
-   ```sh
-   git clone https://github.com/DhruvParmar10/FarmingService.git
-   cd farming-services
+---
+
+## ⚙️ Prerequisites
+- JDK 17+
+- Maven 3.8+
+- Docker 20.10+
+- Kubernetes (Minikube recommended)
+- MySQL 8.0+
+
+---
+
+## 🚀 Installation
+
+### 1️⃣ Clone the Repository
+```bash
+git clone https://github.com/your-org/smartfarm-system.git
+cd smartfarm-system
+```
+
+### 2️⃣ Build All Services
+```bash
+mvn clean package -DskipTests
+```
+
+### 3️⃣ Start with Docker Compose
+```bash
+docker-compose -f docker/docker-compose.yml up --build
+```
+
+### 4️⃣ Deploy on Kubernetes
+```bash
+kubectl apply -f kubernetes/
+```
+
+---
+
+## 🔧 Services
+| Service             | Port  | Description                           |
+|---------------------|-------|---------------------------------------|
+| Eureka Server       | 8761  | Service discovery & registration      |
+| API Gateway         | 9090  | Central entry point & routing         |
+| Auth Service        | 8080  | User authentication & authorization   |
+| Farm Service        | 8081  | Farm and farmer management            |
+| Crop Service        | 8082  | Crop lifecycle tracking & analytics   |
+| Irrigation Service  | 8083  | Smart irrigation scheduler            |
+| Soil Service        | 8084  | Real-time soil monitoring             |
+| Scheduler Service   | 8085  | Automated data simulation             |
+
+---
+
+## 📡 API Endpoints
+See individual service documentation:
+- [🔐 Auth Service](auth-service/README.md)
+- [🌾 Farm Service](farm-service/README.md)
+- [🌱 Crop Service](crop-service/README.md)
+- [🌍 Soil Service](soil-service/README.md)
+
+---
+
+## 📦 Deployment
+
+### 🐳 Docker Compose Sample
+```yaml
+version: '3.8'
+
+services:
+  eureka-server:
+    image: smartfarm/eureka-server:latest
+    ports:
+      - "8761:8761"
+
+  api-gateway:
+    image: smartfarm/api-gateway:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - eureka-server
+
+  auth-service:
+    image: smartfarm/auth-service:latest
+    environment:
+      - EUREKA_URI=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+      - mysql-db
+
+  mysql-db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: smartfarm
+    ports:
+      - "3306:3306"
+```
+
+### ☸️ Kubernetes Deployment
+```bash
+kubectl apply -f mysql-deployment.yaml
+kubectl apply -f eureka-deployment.yaml
+kubectl apply -f auth-deployment.yaml
+kubectl apply -f farm-deployment.yaml
+# Continue with other services
+```
+
+---
+
+## 🔧 Configuration
+Key environment variables:
+```properties
+# Eureka Server
+EUREKA_SERVER_PORT=8761
+
+# API Gateway Routes
+SPRING_CLOUD_GATEWAY_ROUTES_AUTH_URI=lb://auth-service
+SPRING_CLOUD_GATEWAY_ROUTES_FARM_URI=lb://farm-service
+
+# Database
+SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/smartfarm
+SPRING_DATASOURCE_USERNAME=root
+SPRING_DATASOURCE_PASSWORD=root
+```
+
+---
+
+## 🔐 Security
+- 🔒 HTTPS (enable in production)
+- 👤 Role-based access (OWNER, FARMER)
+- 🔑 BCrypt password hashing
+- 🛡️ Optional JWT integration
+- 🔐 Secure service-to-service calls
+
+---
+
+## 🐞 Troubleshooting
+### 🔍 Common Issues
+1. **Service Discovery Fails**
+   - Ensure Eureka is running
+   - Verify correct registration intervals
+
+2. **Database Connection Fails**
+   - Check MySQL credentials & container status
+   - Validate container networking
+
+3. **Docker Networking**
+   ```bash
+   docker network create smartfarm-net
+   docker-compose --network smartfarm-net up
    ```
-2. Build and run the services with Docker:
-   ```sh
-   docker-compose up --build
-   ```
 
-### 2. Kubernetes Deployment
-
-1. Apply Kubernetes manifests:
-   ```sh
-   kubectl apply -f k8s/
-   ```
-2. Verify running services:
-   ```sh
+4. **Kubernetes Pod Issues**
+   ```bash
    kubectl get pods
+   kubectl logs <pod-name>
+   kubectl describe pod <pod-name>
    ```
 
-## Future Enhancements
+---
 
-- **AI-powered Plant Health Detection** - Use ML models to detect diseases from images.
-- **Blockchain for Crop Sales** - Store transactions on a decentralized ledger.
-- **Mobile App for Farmers** - Monitor farm data via mobile.
+## 📄 License
+Licensed under the **Apache License 2.0**.
 
-## License
+---
 
-This project is licensed under the MIT License.
-
-## Contributing
-
-Contributions are welcome! Feel free to fork the repository and submit a pull request.
-
-## Contact
-
-For any inquiries, reach out to [**dhruv.jparmar0@gmail.com**](mailto\:dhruv.jparmar0@gmail.com).
-
+## 📬 Contact
+**Support**: dhruv.jparmar0@gmail.com  
