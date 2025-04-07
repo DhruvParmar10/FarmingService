@@ -4,7 +4,7 @@ A distributed, microservices-based agricultural management system with IoT integ
 
 ---
 
-## 📚 Table of Contents
+## 📚 Table of Contents 
 - [📌 Overview](#overview)
 - [✨ Features](#features)
 - [🧱 Architecture](#architecture)
