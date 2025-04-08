@@ -234,3 +234,7 @@ Licensed under the **Apache License 2.0**.
 
 ## 📬 Contact
 **Support**: dhruv.jparmar0@gmail.com  
+**Support**: rishabhbhangale@gmail.com
+**Support**: bhavismistry2005@gmail.com
+**Support**: shahh.palakk@gmail.com
+
