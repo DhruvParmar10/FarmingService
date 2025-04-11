@@ -1,0 +1,136 @@
+erDiagram
+    FARMER ||--o{ FARM : "manages"
+    FARM ||--o{ CROP : "grows"
+    FARM ||--o{ SOIL_SENSOR : "monitors"
+    FARM ||--o{ IRRIGATION_ZONE : "contains"
+    CROP ||--o{ CROP_MONITORING : "tracked_by"
+    SOIL_SENSOR ||--o{ SOIL_DATA : "generates"
+    IRRIGATION_ZONE ||--o{ IRRIGATION_SCHEDULE : "follows"
+    IRRIGATION_ZONE ||--o{ IRRIGATION_EVENT : "logs"
+    USER }|--|| ROLE : "has"
+    USER ||--o{ FARMER : "can_be"
+    
+    FARMER {
+        int farmer_id PK
+        int user_id FK
+        string first_name
+        string last_name
+        string contact_number
+        string email
+        date registration_date
+        string expertise
+        string certification
+    }
+    
+    FARM {
+        int farm_id PK
+        int farmer_id FK
+        string farm_name
+        float area_size
+        string location
+        string address
+        float gps_latitude
+        float gps_longitude
+        date registration_date
+        string farm_type
+    }
+    
+    CROP {
+        int crop_id PK
+        int farm_id FK
+        string crop_name
+        string variety
+        date planting_date
+        date expected_harvest_date
+        float area_planted
+        string status
+        string growth_stage
+    }
+    
+    SOIL_SENSOR {
+        int sensor_id PK
+        int farm_id FK
+        string sensor_name
+        string sensor_type
+        float gps_latitude
+        float gps_longitude
+        date installation_date
+        string status
+        string firmware_version
+    }
+    
+    SOIL_DATA {
+        int data_id PK
+        int sensor_id FK
+        timestamp reading_time
+        float moisture_level
+        float temperature
+        float ph_level
+        float nitrogen_level
+        float phosphorus_level
+        float potassium_level
+    }
+    
+    IRRIGATION_ZONE {
+        int zone_id PK
+        int farm_id FK
+        string zone_name
+        float area_size
+        string crop_type
+        string soil_type
+        string irrigation_method
+        int water_source_id
+    }
+    
+    IRRIGATION_SCHEDULE {
+        int schedule_id PK
+        int zone_id FK
+        time start_time
+        int duration
+        string frequency
+        string days_of_week
+        date effective_from
+        date effective_until
+        boolean is_automated
+    }
+    
+    IRRIGATION_EVENT {
+        int event_id PK
+        int zone_id FK
+        timestamp start_time
+        timestamp end_time
+        float water_volume
+        string trigger_type
+        string status
+        string notes
+    }
+    
+    CROP_MONITORING {
+        int monitoring_id PK
+        int crop_id FK
+        date observation_date
+        float height
+        string disease_status
+        string pest_status
+        float estimated_yield
+        string growth_stage
+        string notes
+    }
+    
+    USER {
+        int user_id PK
+        string username
+        string password_hash
+        string email
+        date created_at
+        date last_login
+        boolean active_status
+        string auth_provider
+    }
+    
+    ROLE {
+        int role_id PK
+        string role_name
+        string permissions
+        string description
+    }

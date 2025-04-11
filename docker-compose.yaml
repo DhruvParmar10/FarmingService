@@ -1,0 +1,217 @@
+version: '3.8'
+
+services:
+  # Eureka Service Discovery Server
+  eureka-server:
+    build: ./eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      SPRING_CONFIG_IMPORT: configserver:http://config-server:8888
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8761"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+  # API Gateway
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "9090:9090"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+  #Config server
+  config-server:
+    build: ./config-server
+    container_name: config-server
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    ports:
+      - "8888:8888"
+    networks:
+      - smartfarm-net
+
+  # Auth Service + DB
+  auth-db:
+    image: mysql:8.0
+    container_name: auth-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: auth_db
+    volumes:
+      - auth_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - smartfarm-net
+
+  auth-service:
+    build: ./auth
+    container_name: auth-service
+    ports:
+      - "8080:8080"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://auth-db:3306/auth_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      auth-db:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+  # Farmer Service + DB
+  farmer-db:
+    image: mysql:8.0
+    container_name: farmer-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: farmer_db
+    volumes:
+      - farmer_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - smartfarm-net
+
+  farmer-service:
+    build: ./farmer
+    container_name: farmer-service
+    ports:
+      - "8081:8081"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://farmer-db:3306/farmer_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      farmer-db:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+  # Crop Service + DB
+  crop-db:
+    image: mysql:8.0
+    container_name: crop-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: crop_db
+    volumes:
+      - crop_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - smartfarm-net
+
+  crop-service:
+    build: ./crop
+    container_name: crop-service
+    ports:
+      - "8083:8083"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://crop-db:3306/crop_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      crop-db:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+  # Soil Service + DB
+  soil-db:
+    image: mysql:8.0
+    container_name: soil-db
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: soil_db
+    volumes:
+      - soil_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - smartfarm-net
+
+  soil-service:
+    build: ./soilMonitoring 2
+    container_name: soil-service
+    ports:
+      - "8082:8082"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_URL: jdbc:mysql://soil-db:3306/soil_db
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+      soil-db:
+        condition: service_healthy
+    networks:
+      - smartfarm-net
+
+
+
+  scheduler-service:
+    build: ./scheduler
+    container_name: scheduler-service
+    ports:
+      - "8084:8084"
+    environment:
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+    depends_on:
+      eureka-server:
+        condition: service_healthy
+
+    networks:
+      - smartfarm-net
+
+volumes:
+  auth_data:
+  farmer_data:
+  crop_data:
+  soil_data:
+
+networks:
+  smartfarm-net:
+    driver: bridge
